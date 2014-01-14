@@ -1,0 +1,5 @@
+#!/bin/bash
+EXT="*.$1"
+QUERY=$2
+#echo "GREPing $EXT files for $QUERY..."
+find ./ -name "$EXT" | xargs grep $QUERY $3 $4 $5 $6
