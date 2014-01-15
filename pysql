@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+from __future__ import print_function
+ 
+import os
+import sys
+import urlparse
+ 
+ 
+def main(url):
+    result = urlparse.urlparse(url)
+    if result.scheme not in ('postgres', 'postgresql'):
+        print('Only postgres/postgresql scheme is supported', file=sys.stderr)
+        return 1
+ 
+    print(result)
+ 
+    environ = os.environ.copy()
+    if result.password:
+        environ['PGPASSWORD'] = result.password
+ 
+        args = ['psql']
+ 
+    if result.username:
+        args.extend(('-U', result.username))
+ 
+    args.extend(('-h', result.hostname))
+    args.append(result.path.lstrip('/'))
+ 
+    os.execvpe('psql', args, environ)
+ 
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1]))
